@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTextStream;
@@ -172,7 +172,5 @@ procedure TBoldTextStream.Clear;
 begin
   Size := 0;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRootedHandlesCom;
@@ -227,7 +227,5 @@ begin
     LocalValueChanged;
   end;
 end;
-
-initialization
 
 end.

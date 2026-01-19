@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldObjectMarshaler;
@@ -84,7 +84,5 @@ begin
       BoldLogError('%s.UnMarshalObject: %s', [ClassName, E.Message]);
   end;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractOutputQueueHandler;
@@ -21,8 +21,5 @@ type
   end;
 
 implementation
-
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCheckBoxCom;
@@ -260,7 +260,5 @@ function TBoldCustomCheckBoxCom.GetVariableList: IBoldExternalVariableList;
 begin
   result := BoldProperties.VariableList;
 end;
-
-initialization
 
 end.

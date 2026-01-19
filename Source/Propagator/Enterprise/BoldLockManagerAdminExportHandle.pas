@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockManagerAdminExportHandle;
@@ -51,7 +51,5 @@ function TBoldLockManagerAdminComExportHandle.GetHandledObject: TObject;
 begin
   Result := nil;
 end;
-
-initialization
 
 end.

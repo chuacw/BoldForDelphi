@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldReferenceHandleCom;
@@ -39,8 +39,7 @@ uses
   SysUtils,
   BoldComObjectSpace,
   BoldComUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 {-- TBoldReferenceHandleCom ---------------------------------------------------}
 
@@ -151,7 +150,5 @@ function TBoldReferenceHandleCom.ServerHandleClassName: string;
 begin
   result := 'TBoldReferenceHandle';
 end;
-
-initialization
 
 end.

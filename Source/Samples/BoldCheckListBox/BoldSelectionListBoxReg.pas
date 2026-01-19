@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSelectionListBoxReg;
@@ -16,7 +16,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents(BOLDPAGENAME_CONTROLS, [TBoldSelectionListBox]);
+    RegisterComponents(BOLDPAGENAME_CONTROLS, [TBoldSelectionListBox]);
 end;
 
 

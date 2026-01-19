@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldViewerControlPackCom;
@@ -31,12 +31,7 @@ type
   TBoldAbstractViewAdapterCom = class;
 
   { TBoldAsViewerRendererCom }
-  {$IFDEF BOLD_BCB}
-  TBoldGetAsViewerCom = procedure (Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; var AbstractViewAdapter: TBoldAbstractViewAdapterCom) of object;
-  {$ENDIF}
-  {$IFDEF BOLD_DELPHI}
   TBoldGetAsViewerCom = function (Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): TBoldAbstractViewAdapterCom of object;
-  {$ENDIF}
   TBoldSetAsViewerCom = procedure (Element: IBoldElement; Value: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
   TBoldViewerIsChangedCom = function (RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
 
@@ -68,7 +63,7 @@ type
     procedure DefaultSetAsViewer(Element: IBoldElement; Value: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
     function DefaultIsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     function IsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
-    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
   published
     property OnGetAsViewer: TBoldGetAsViewerCom read FOnGetAsViewer write FOnGetAsViewer;
     property OnSetAsViewer: TBoldSetAsViewerCom read FOnSetAsViewer write FOnSetAsViewer;
@@ -159,7 +154,7 @@ end;
 
 { TBoldAsViewerRendererCom }
 
-procedure TBoldAsViewerRendererCom.MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
+procedure TBoldAsViewerRendererCom.MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
   Controller: TBoldViewerFollowerControllerCom;
 begin
@@ -318,15 +313,7 @@ begin
     Subscriber := nil;
   end;
   if Assigned(OnGetAsViewer) then
-  begin
-    {$IFDEF BOLD_BCB}
-    Result := nil;
-    OnGetAsViewer(Element, Representation, Expression, Result);
-    {$ENDIF}
-    {$IFDEF BOLD_DELPHI}
-    Result := OnGetAsViewer(Element, Representation, Expression);
-    {$ENDIF}
-  end
+    Result := OnGetAsViewer(Element, Representation, Expression)
   else
     Result := DefaultGetAsViewerAndSubscribe(Element, Representation, Expression, VariableList, Subscriber);
 end;

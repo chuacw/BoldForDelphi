@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldModelLoader;
@@ -32,8 +32,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 var
   G_ModelLoader: TBoldModelLoader = nil;

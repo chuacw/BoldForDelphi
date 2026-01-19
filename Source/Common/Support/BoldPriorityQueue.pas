@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPriorityQueue;
@@ -50,8 +50,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPriorityQueue }
 
@@ -221,7 +220,5 @@ begin
     fLocker.Release;
   end;
 end;
-
-initialization
 
 end.

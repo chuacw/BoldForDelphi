@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldImageJPEG;
@@ -57,8 +57,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 
 {-- TBoldViewJPEGAdapter --}

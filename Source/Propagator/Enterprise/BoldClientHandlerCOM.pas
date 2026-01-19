@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldClientHandlerCOM;
@@ -124,7 +124,5 @@ begin
   Result := inherited CreateComObject(Controller);
  (Result as TBoldClientHandlerCOM).ClientHandler := ClientHandler;
 end;
-
-initialization
 
 end.

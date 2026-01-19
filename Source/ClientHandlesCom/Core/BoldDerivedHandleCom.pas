@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDerivedHandleCom;
@@ -112,7 +112,5 @@ function TBoldDerivedHandleCom.ServerHandleClassName: string;
 begin
   result := 'TBoldDerivedHandle';
 end;
-
-initialization
 
 end.

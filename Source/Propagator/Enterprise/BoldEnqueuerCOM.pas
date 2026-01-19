@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldEnqueuerCOM;
@@ -106,7 +106,5 @@ begin
   Result := inherited CreateComObject(Controller);
   (Result as TBoldEnqueuerCOM).Enqueuer := Enqueuer;
 end;
-
-initialization
 
 end.

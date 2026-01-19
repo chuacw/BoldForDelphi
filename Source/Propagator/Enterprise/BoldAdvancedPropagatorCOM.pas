@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAdvancedPropagatorCOM;
@@ -83,7 +83,5 @@ constructor TBoldPropagatorFactory.Create(ComServer: TComServerObject; const Cla
 begin
   inherited Create(ComServer, TBoldAdvancedPropagatorCOM, ClassID, ClassName, Description, ciMultiInstance, tmFree);
 end;
-
-initialization
 
 end.

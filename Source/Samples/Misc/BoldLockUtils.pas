@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockUtils;
@@ -8,7 +8,7 @@ interface
 uses
   Classes,
   Grids,
-  BoldMath,
+  System.Math,
   BoldObjectRetriever,
   BoldSystem,
   BoldIndex,

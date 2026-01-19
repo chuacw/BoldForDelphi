@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComServ;
@@ -21,8 +21,5 @@ function Bold_TheComServer: TComServerObject;
 begin
   result := ComServer;
 end;
-
-
-initialization
 
 end.

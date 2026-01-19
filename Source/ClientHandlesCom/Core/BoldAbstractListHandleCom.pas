@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractListHandleCom;
@@ -155,7 +155,5 @@ begin
   else
     result := nil;
 end;
-
-initialization
 
 end.

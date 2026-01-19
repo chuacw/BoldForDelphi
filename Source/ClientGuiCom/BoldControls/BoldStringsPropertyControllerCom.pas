@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldStringsPropertyControllerCom;
@@ -259,7 +259,5 @@ begin
   if not Assigned(fVCLComponent) then
     PropertyName := '';
 end;
-
-initialization
 
 end.

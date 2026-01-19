@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComServerElementHandles;
@@ -90,7 +90,5 @@ begin
     FExportMode := Value;
   end;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComServiceRegister;
@@ -169,7 +169,5 @@ procedure TBoldComServiceRegister.DoServiceStop;
 begin
   RegisterClassFactories(False, AppID, [AppID]);
 end;
-
-initialization
 
 end.

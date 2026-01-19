@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockManager;
@@ -239,7 +239,5 @@ begin
       inc(i);
     end;
 end;
-
-initialization
 
 end.

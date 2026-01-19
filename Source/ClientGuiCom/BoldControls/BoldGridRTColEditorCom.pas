@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGridRTColEditorCom;
@@ -211,7 +211,5 @@ begin
   end;
   {$ENDIF}
 end;
-
-initialization
 
 end.

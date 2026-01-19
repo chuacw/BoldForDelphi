@@ -1,9 +1,9 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMMImporter;
 
-interface 
+interface
 
 uses
   BoldUMLModel,
@@ -104,13 +104,13 @@ begin
       CommaPos := Pos(',', Chunk);
       if CommaPos = 0 then
       begin
-       ParameterName := BoldTrim(Chunk);
+       ParameterName := Trim(Chunk);
        Chunk := '';
       end
       else
       begin
-        ParameterName := BoldTrim(Copy(Chunk, 1, CommaPos-1));
-        Chunk := BoldTrim(Copy(Chunk, CommaPos+1, MaxInt));
+        ParameterName := Trim(Copy(Chunk, 1, CommaPos-1));
+        Chunk := Trim(Copy(Chunk, CommaPos+1, MaxInt));
       end;
       UMLParameter := UMLParameters.AddNew;
       TBoldUMLSupport.EnsureBoldTaggedValues(UMLParameter);
@@ -156,13 +156,13 @@ begin
       CommaPos := Pos(',', Chunk);
       if CommaPos = 0 then
       begin
-       QualifierName := BoldTrim(Chunk);
+       QualifierName := Trim(Chunk);
        Chunk := '';
       end
       else
       begin
-        QualifierName := BoldTrim(Copy(Chunk, 1, CommaPos-1));
-        Chunk := BoldTrim(Copy(Chunk, CommaPos+1, MaxInt));
+        QualifierName := Trim(Copy(Chunk, 1, CommaPos-1));
+        Chunk := Trim(Copy(Chunk, CommaPos+1, MaxInt));
       end;
       UMLAttribute := UMLQualifiers.AddNew;
       TBoldUMLSupport.EnsureBoldTaggedValues(UMLAttribute);
@@ -470,11 +470,18 @@ end;
 
 procedure TMMModelImporter.RawImport;
 begin
-  fUMLModel.name := ChangeFileExt(ExtractFileName(MMToolServices.ProjectManager.ProjectName), '');
-  pass := PASS1;
-  ImportModel(MMToolServices.CodeModel);
-  pass := PASS2;
-  ImportModel(MMToolServices.CodeModel);
+  fUMLModel.BoldSystem.StartTransaction;
+  try
+    fUMLModel.name := ChangeFileExt(ExtractFileName(MMToolServices.ProjectManager.ProjectName), '');
+    pass := PASS1;
+    ImportModel(MMToolServices.CodeModel);
+    pass := PASS2;
+    ImportModel(MMToolServices.CodeModel);
+    fUMLModel.BoldSystem.CommitTransaction;
+  except
+    fUMLModel.BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 end.

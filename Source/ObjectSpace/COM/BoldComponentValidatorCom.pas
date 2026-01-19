@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComponentValidatorCom;
@@ -14,7 +14,5 @@ type
   end;
 
 implementation
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAwareGuiComReg;
@@ -171,8 +171,8 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
-  RegisterEditors;
+    RegisterComponentsOnPalette;
+    RegisterEditors;
 end;
 
 end.
