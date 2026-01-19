@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComObjectSpace;
@@ -62,7 +62,5 @@ begin
   end;
   Result := G_TypeLibrary;
 end;
-
-initialization
 
 end.

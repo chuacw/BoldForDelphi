@@ -1,5 +1,4 @@
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldRichEdit;
 
@@ -142,8 +141,7 @@ uses
   BoldDefs,
   BoldControlPackDefs,
   BoldUtils,
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 {---TBoldCustomRichEdit---}
 constructor TBoldCustomRichEdit.Create(AOwner: TComponent);
@@ -383,8 +381,5 @@ function TBoldCustomRichEdit.GetFollower: TBoldFollower;
 begin
   Result := fHandleFollower.Follower;
 end;
-
-initialization
-
 
 end.

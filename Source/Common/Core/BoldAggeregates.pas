@@ -1,4 +1,4 @@
-unit BoldAggeregates;
+﻿unit BoldAggeregates;
 
 interface
 
@@ -50,7 +50,7 @@ type
 implementation
 
 uses
-  Windows; // MSWINDOWS, InterlockedIncrement/Decrement
+  Windows;
 
 {-- TBoldAggregateableObject --------------------------------------------------}
 

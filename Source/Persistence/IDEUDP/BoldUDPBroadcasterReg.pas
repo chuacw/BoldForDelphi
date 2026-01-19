@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUDPBroadcasterReg;
@@ -13,6 +13,8 @@ uses
   Classes,
   BoldIDEConsts,
   BoldUDPModificationBroadCaster;
+
+{$R BoldUDPBroadCaster.res}
 
 procedure Register;
 begin

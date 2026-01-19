@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDatabaseAdapterDOA;
@@ -72,7 +72,5 @@ procedure TBoldDatabaseAdapterDOA.SetDataBase(const Value: TOracleSession);
 begin
   InternalDatabase := value;
 end;
-
-initialization
 
 end.

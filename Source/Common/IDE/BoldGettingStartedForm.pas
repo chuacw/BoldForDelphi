@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGettingStartedForm;
@@ -60,7 +60,5 @@ procedure TFGettingStarted.btnCloseClick(Sender: TObject);
 begin
   Close;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldVariableHandleCom;
@@ -187,6 +187,4 @@ begin
   ValueTypeName := Reader.ReadString;
 end;
 
-initialization
-  
 end.

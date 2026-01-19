@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPropertiesControllerCom;
@@ -494,7 +494,5 @@ begin
   else
     result := nil;
 end;
-
-initialization
 
 end.

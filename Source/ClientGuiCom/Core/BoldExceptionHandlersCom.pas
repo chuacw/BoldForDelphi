@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExceptionHandlersCom;
@@ -35,9 +35,6 @@ type
   end;      
 
 implementation
-
-uses
-  BoldRev;
 
 var
   G_BoldExceptionHandlers: TList = nil;

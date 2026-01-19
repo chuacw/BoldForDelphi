@@ -9,6 +9,7 @@
 *.drc
 *.map
 *.dres
+dclBold.res
 *.rsm
 *.tds
 *.dcu
@@ -29,6 +30,7 @@
 *.projdata
 *.tvsconfig
 *.dsk
+*.delphilsp.json
 
 # Delphi history and backups
 __history/
@@ -37,3 +39,22 @@ __recovery/
 
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
+
+# Unit test generated files
+dunitx-results.xml
+UnitTest/coverage_report/
+UnitTest/Win32/
+UnitTest/cobertura.xml
+UnitTest/codecov.json
+UnitTest/codecov.exe
+UnitTest/test_codecov.json
+TestInsightSettings.ini
+
+# Example app data files
+*.db
+BoldDemo.xml
+
+# Windows nul device file accidentally created
+nul
+# MkDocs generated site
+site/

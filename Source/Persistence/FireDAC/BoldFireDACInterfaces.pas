@@ -5,6 +5,8 @@ unit BoldFireDACInterfaces;
 
 interface
 
+{$M-}  // Reset RTTI state (BoldDBInterfaces enables {$M+} for interface mocking)
+
 uses
   Classes,
   Db,
@@ -83,30 +85,31 @@ type
     fQuery: TFDQuery;
     fReadTransactionStarted: Boolean;
     fUseReadTransactions: boolean;
-    function GetQuery: TFDQuery; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetQuery: TFDQuery;
     procedure AssignParams(Sourceparams: TParams);
     function GetParamCount: Integer;
-    function GetParam(i: Integer): IBoldParameter;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetParam(i: Integer): IBoldParameter;
     function GetParamCheck: Boolean;
     procedure SetParamCheck(value: Boolean);
     function GetRequestLiveQuery: Boolean;
-    function ParamByName(const Value: string): IBoldParameter; override;
-    function FindParam(const Value: string): IBoldParameter; override;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
     procedure SetRequestLiveQuery(NewValue: Boolean);
     procedure AssignSQL(SQL: TStrings); virtual;
-    function GetSQLStrings: TStrings; override;
     function GetRecordCount: Integer;
     function GetUseReadTransactions: boolean;
     procedure SetUseReadTransactions(value: boolean);
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
   protected
+    function ParamByName(const Value: string): IBoldParameter; override;
+    function FindParam(const Value: string): IBoldParameter; override;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
     function GetParams: TParams; override;
     function GetSqlText: string; override;
+    function GetSQLStrings: TStrings; override;
     procedure AssignSQLText(const SQL: string); override;
     function GetRowsAffected: Integer;
     function GetDataSet: TDataSet; override;
+    procedure Prepare;
     procedure ClearParams;
     procedure Open; override;
     procedure Close; override;
@@ -119,41 +122,39 @@ type
     procedure Clear; override;
   end;
 
-  { TBoldFireDACQuery }
-  TBoldFireDACExecQuery = class(TBoldAbstractQueryWrapper, IBoldExecQuery, IBoldParameterized)
+  { TBoldFireDACExecQuery }
+  TBoldFireDACExecQuery = class(TBoldBatchDataSetWrapper, IBoldExecQuery, IBoldParameterized)
   private
     fExecQuery: TFDQuery;
     fReadTransactionStarted: Boolean;
     fUseReadTransactions: boolean;
+  protected
     function GetExecQuery: TFDQuery;
-    function GetParams: TParams;
+    function GetParams: TParams; override;
     procedure AssignParams(Sourceparams: TParams);
     function GetParamCount: Integer;
     function GetParam(i: Integer): IBoldParameter;
     function GetParamCheck: Boolean;
     procedure SetParamCheck(value: Boolean);
-    function ParamByName(const Value: string): IBoldParameter;
-    function FindParam(const Value: string): IBoldParameter;
-    function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload;
-    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload;
-    function EnsureParamByName(const Value: string): IBoldParameter;
-    function GetSQLText: string;
-    function GetSQLStrings: TStrings;
+    function ParamByName(const Value: string): IBoldParameter; override;
+    function FindParam(const Value: string): IBoldParameter; override;
+    function CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; override;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; override;
+    function EnsureParamByName(const Value: string): IBoldParameter; override;
+    function GetSqlText: string; override;
+    function GetSQLStrings: TStrings; override;
     procedure AssignSQL(SQL: TStrings); virtual;
-    procedure AssignSQLText(const SQL: string);
+    procedure AssignSQLText(const SQL: string); override;
     function GetRowsAffected: Integer;
     function GetUseReadTransactions: boolean;
     procedure SetUseReadTransactions(value: boolean);
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
     function GetBatchQueryParamCount: integer;
-//    procedure Prepare;
-  protected
-    procedure StartSQLBatch; virtual;
-    procedure EndSQLBatch; virtual;
-    procedure FailSQLBatch; virtual;
+    procedure Prepare;
+    function GetDataSet: TDataSet; override;
     procedure ClearParams;
-    procedure ExecSQL; virtual;
+    procedure ExecSQL; override;
     property ExecQuery: TFDQuery read GetExecQuery;
   public
     constructor Create(BoldFireDACConnection: TBoldFireDACConnection); reintroduce;
@@ -176,20 +177,20 @@ type
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
     function GetExists: Boolean;
-//    function GetCommaListOfIndexesForColumn(const aColumnName: string): string;
-//    function GetPrimaryIndex: string;
   protected
-    function GetDefaultConstraintNameForColumn(const aColumnName: string): string; {override;}
     function GetDataSet: TDataSet; override;
     function ParamByName(const Value: string): IBoldParameter; override;
     function FindParam(const Value: string): IBoldParameter; override;
   public
     constructor Create(aFDTable: TFDTable; BoldFireDACConnection: TBoldFireDACConnection); reintroduce;
+    destructor Destroy; override;
   end;
 
   { TBoldFireDACConnection }
   TBoldFireDACConnection = class(TBoldDatabaseWrapper, IBoldDataBase)
+  private
     fFDConnection: TFDConnection;
+    fOwnsConnection: Boolean;
     fCachedTable: TBoldFireDACTable;
     fCachedQuery1: TBoldFireDACQuery;
     fCachedQuery2: TBoldFireDACQuery;
@@ -221,6 +222,8 @@ type
     function GetUpdateTransaction: TFDTransaction;
     procedure SetTransaction(const Value: TFDTransaction);
     procedure SetUpdateTransaction(const Value: TFDTransaction);
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
+    function GetImplementor: TObject;
   protected
     procedure AllTableNames(Pattern: string; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetTable: IBoldTable; override;
@@ -229,6 +232,7 @@ type
     procedure ReleaseTable(var Table: IBoldTable); override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
     procedure ReleaseExecQuery(var Query: IBoldExecQuery); override;
+    function TableExists(const TableName: String): Boolean; override;
     property Transaction: TFDTransaction read GetTransaction write SetTransaction;
     property UpdateTransaction: TFDTransaction read GetUpdateTransaction write SetUpdateTransaction;
   public
@@ -267,11 +271,6 @@ uses
 
 function TBoldFireDACQuery.GetQuery: TFDQuery;
 begin
-  if not Assigned(fQuery) then
-  begin
-    fQuery := TFDQuery.Create(nil);
-    fQuery.Connection := (DatabaseWrapper as TBoldFireDACConnection).FDConnection;
-  end;
   Result := fQuery;
 end;
 
@@ -282,7 +281,7 @@ end;
 
 function TBoldFireDACQuery.GetParamCheck: Boolean;
 begin
-  result := true; // ?
+  result := Query.ResourceOptions.ParamCreate;
 end;
 
 function TBoldFireDACQuery.GetParamCount: Integer;
@@ -363,10 +362,6 @@ end;
 procedure TBoldFireDACQuery.AssignSQLText(const SQL: string);
 begin
   Query.SQL.Text := Sql;
-{  if SQL = '' then
-    Query.Params.clear
-  else
-    Query.Params.ParseSQL(SQL, False);}
 end;
 
 procedure TBoldFireDACQuery.BeginExecuteQuery;
@@ -427,9 +422,6 @@ end;
 type TStringsAccess = class(TStrings);
 
 procedure TBoldFireDACQuery.ExecSQL;
-var
-  Retries: Integer;
-  Done: Boolean;
 begin
   if InBatch then
   begin
@@ -439,37 +431,27 @@ begin
   BeginExecuteQuery;
   try
     BoldLogSQLWithParams(Query.SQL, self);
-    Retries := 0;
-    Done := false;
-    while not Done do
-    begin
-      try
-        if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
-          fReadTransactionStarted := false
-        else
-        begin
-          if fUseReadTransactions then
+    try
+      if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+        fReadTransactionStarted := false
+      else
+      begin
+        if fUseReadTransactions then
           (DatabaseWrapper as TBoldFireDACConnection).StartReadTransaction;
-          fReadTransactionStarted := fUseReadTransactions;
-        end;
-        Query.Execute;
-        if fReadTransactionStarted and (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
-        begin
-         (DatabaseWrapper as TBoldFireDACConnection).Commit;
-         fReadTransactionStarted := false;
-        end;
-        Done := true;
-      except
-        on e: Exception do
-        begin
-          if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
-            (DatabaseWrapper as TBoldFireDACConnection).Rollback;
-          if (not fReadTransactionStarted) or (Retries > 4) then
-            raise TBoldFireDACConnection(DatabaseWrapper).GetDatabaseError(E, Query.SQL.Text);
-          fReadTransactionStarted := false;
-          INC(Retries);
-          sleep(Retries*200);
-        end;
+        fReadTransactionStarted := fUseReadTransactions;
+      end;
+      Query.Execute;
+      if fReadTransactionStarted and (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+      begin
+        (DatabaseWrapper as TBoldFireDACConnection).Commit;
+        fReadTransactionStarted := false;
+      end;
+    except
+      on E: Exception do
+      begin
+        if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+          (DatabaseWrapper as TBoldFireDACConnection).Rollback;
+        raise TBoldFireDACConnection(DatabaseWrapper).GetDatabaseError(E, Query.SQL.Text);
       end;
     end;
   finally
@@ -488,18 +470,10 @@ begin
 end;
 
 procedure TBoldFireDACQuery.Open;
-var
-  Retries: Integer;
-  Done: Boolean;
-  EDatabase: EBoldDatabaseError;
 begin
   BeginExecuteQuery;
   try
-  BoldLogSQLWithParams(Query.SQL, self);
-  Retries := 0;
-  Done := false;
-  while not Done do
-  begin
+    BoldLogSQLWithParams(Query.SQL, self);
     try
       if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
         fReadTransactionStarted := false
@@ -511,33 +485,14 @@ begin
       end;
       Query.UpdateOptions.ReadOnly := true;
       inherited;
-      Done := true;
     except
-      on e: Exception do
+      on E: Exception do
       begin
-        EDatabase := TBoldFireDACConnection(DatabaseWrapper).
-            GetDatabaseError(E, Query.SQL.Text);
-        if (EDatabase is EBoldDatabaseConnectionError) {and
-           (not Assigned(ReconnectAppExists) or ReconnectAppExists)} then
-        begin
-          EDatabase.free;
-//          ReconnectDatabase(Query.SQL.Text);
-          Reconnect;
-        end else
-        begin
-          if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
-            (DatabaseWrapper as TBoldFireDACConnection).Rollback;
-          if (not fReadTransactionStarted) or (Retries > 4) then
-            raise EDatabase
-          else
-            EDatabase.free;
-          fReadTransactionStarted := false;
-          INC(Retries);
-          sleep(Retries*200);
-        end;
+        if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+          (DatabaseWrapper as TBoldFireDACConnection).Rollback;
+        raise TBoldFireDACConnection(DatabaseWrapper).GetDatabaseError(E, Query.SQL.Text);
       end;
     end;
-  end;
   finally
     EndExecuteQuery;
   end;
@@ -551,10 +506,14 @@ begin
   Result := TBoldFireDACParameter.Create(lFDParam, Self)
 end;
 
+procedure TBoldFireDACQuery.Prepare;
+begin
+  Query.Prepare;
+end;
+
 procedure TBoldFireDACQuery.SetParamCheck(value: Boolean);
 begin
-//  if Query.ParamCheck <> Value then
-//    Query.ParamCheck := Value;
+  Query.ResourceOptions.ParamCreate := Value;
 end;
 
 procedure TBoldFireDACQuery.SetRequestLiveQuery(NewValue: Boolean);
@@ -575,161 +534,40 @@ begin
   fFDTable := aFDTable;
 end;
 
+destructor TBoldFireDACTable.Destroy;
+begin
+  FreeAndNil(fFDTable);
+  inherited;
+end;
+
 procedure TBoldFireDACTable.CreateTable;
 begin
-  FDTable.CreateTable(true);
+  // Not used - SupportsTableCreation returns False, so Bold uses SQL generation instead
+  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'CreateTable']);
 end;
 
 procedure TBoldFireDACTable.DeleteTable;
 begin
-  FDTable.ExecSQL('Drop Table ' + FDTable.TableName);
+  // Not used - SupportsTableCreation returns False, so Bold uses SQL generation instead
+  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'DeleteTable']);
 end;
 
 function TBoldFireDACTable.FindParam(const Value: string): IBoldParameter;
-var
-  Param: TFireDacParam;
 begin
-  result := nil;
-  Param := FDTable.FindParam(Value);
-  if Assigned(Param) then
-    Result := TBoldFireDACParameter.Create(Param, Self);
+  // Required by base class but never called for IBoldTable
+  Result := nil;
 end;
 
 procedure TBoldFireDACTable.AddIndex(const Name, Fields: string;
   Options: TIndexOptions; const DescFields: string);
-var
-  SortOption: TFDSortOptions;
 begin
-// ixPrimary, ixUnique, ixDescending, ixCaseInsensitive, ixExpression, ixNonMaintained);
-// soNoCase, soNullFirst, soDescNullLast, soDescending, soUnique, soPrimary, soNoSymbols);
-  SortOption := [];
-  if ixCaseInsensitive in Options  then
-    Include(SortOption, soNoCase);
-  if ixUnique in Options  then
-    Include(SortOption, soUnique);
-  if ixPrimary in Options  then
-    Include(SortOption, soPrimary);
-  if ixDescending in Options  then
-    Include(SortOption, soDescending);
-  FDTable.AddIndex(Name, Fields, '', SortOption, DescFields);
-end;
-(*
-function TBoldFireDACTable.GetCommaListOfIndexesForColumn(
-  const aColumnName: string): string;
-var
-  lUniMetaData: TUniMetaData;
-  lIndexList: TStringList;
-  lIndexedColumn: string;
-  lIndexName: string;
-  lBoldGuard: IBoldGuard;
-const
-  cTableName = 'Table_Name';
-  cIndexName = 'Index_Name';
-  cColumnName = 'Column_Name';
-begin
-// TODO possibly slow comment
-// to improve performance move metadata to the Connection and store it there
-
-  lBoldGuard := TBoldGuard.Create(lUniMetaData, lIndexList);
-  lUniMetaData := TUniMetaData.Create(nil);
-  lIndexList := TStringList.Create;
-
-  Assert(Assigned(UniTable));
-  Assert(Assigned(UniTable.Connection));
-  lUniMetaData.Connection := UniTable.Connection;
-//  lUniMetaData.DatabaseName := UniTable.Connection.Database;
-  lUniMetaData.MetaDataKind := 'Indexes';
-{  lUniMetaData.TableName := GetTableName;
-  lUniMetaData.Open;
-  lUniMetaData.First;
-  while not lUniMetaData.Eof do
-  begin
-    lIndexedColumn := lUniMetaData.FieldByName(cColumnName).AsString;
-    if aColumnName = lIndexedColumn then
-    begin
-      lIndexName := lUniMetaData.FieldByName(cIndexName).AsString;
-      lIndexList.Add(lIndexName);
-    end;
-    lUniMetaData.Next;
-  end;
-  Result := lIndexList.CommaText;
-  lUniMetaData.Close;
-}
+  // Not used - SupportsTableCreation returns False, so Bold uses SQL generation instead
+  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'AddIndex']);
 end;
 
-function TBoldFireDACTable.GetPrimaryIndex: string;
-var
-  lUniMetaData: TUniMetaData;
-  lIndexName: string;
-const
-  cTableName = 'Table_Name';
-  cIndexName = 'Index_Name';
-  cColumnName = 'Column_Name';
-  cPrimaryKey = 'Primary_Key';
-//  COLUMN_NAME
-begin
-// TODO possibly slow comment
-// to improve performance move metadata to the Connection and store it there
-
-  lUniMetaData := TUniMetaData.Create(nil);
-  try
-    Assert(Assigned(UniTable));
-    Assert(Assigned(UniTable.Connection));
-    lUniMetaData.Connection := UniTable.Connection;
-//    lUniMetaData.DatabaseName := UniTable.Connection.Database;
-{    lUniMetaData.MetaDataKind := otPrimaryKeys;
-    lUniMetaData.Open;
-    lUniMetaData.Filter := Format('(%s = ''%s'')', [cTableName, GetTableName]);
-    lUniMetaData.Filtered := True;
-    if lUniMetaData.RecordCount = 1 then
-    begin
-      lIndexName := lUniMetaData.FieldByName(cColumnName).AsString;
-      Result := lIndexName;
-    end
-    else
-    begin
-      Result := '';
-    end;
-    lUniMetaData.Close;
-}
-  finally
-    lUniMetaData.free;
-  end;
-end;
-*)
 function TBoldFireDACTable.GetDataSet: TDataSet;
 begin
   Result := fFDTable;
-end;
-
-function TBoldFireDACTable.GetDefaultConstraintNameForColumn(
-  const aColumnName: string): string;
-var
-  lFDMetaData: TFDMetaInfoQuery;
-  lDefaultConstraintName: string;
-  lBoldGuard: IBoldGuard;
-const
-  cConstraintName = 'CONSTRAINT_NAME';
-begin
-  Assert(Assigned(FDTable));
-  Assert(Assigned(FDTable.Connection));
-
-  lBoldGuard := TBoldGuard.Create(lFDMetaData);
-  lFDMetaData := TFDMetaInfoQuery.Create(nil);
-  lFDMetaData.Connection := FDTable.Connection;
-{  lUniMetaData.DatabaseName := UniTable.Connection.Database;
-  lUniMetaData.TableName := GetTableName;
-  lUniMetaData.ColumnName := aColumnName;
-  lUniMetaData.ObjectType := otConstraintColumnUsage;
-  lUniMetaData.Open;
-  lUniMetaData.First;
-  if not lUniMetaData.Eof then
-  begin
-    lDefaultConstraintName := lUniMetaData.FieldByName(cConstraintName).AsString;
-  end;
-  lUniMetaData.Close;
-}
-  Result := lDefaultConstraintName;
 end;
 
 function TBoldFireDACTable.GetExclusive: Boolean;
@@ -742,15 +580,12 @@ var
   lAllTables: TStringList;
   lGuard: IBoldGuard;
 begin
-  lGuard := TBoldGuard.Create(lAllTables);
   Result := False;
-
-  // First we make sure we have a table component and that it is connected to a database
   if Assigned(FDTable) and Assigned(FDTable.Connection) then
   begin
-    // We now create a list that will hold all the table names in the database
+    lGuard := TBoldGuard.Create(lAllTables);
     lAllTables := TStringList.Create;
-    FDTable.Connection.GetTableNames('', '', '', lAllTables); // ?
+    FDTable.Connection.GetTableNames('', '', '', lAllTables, [osMy], [tkTable], false);
     Result := lAllTables.IndexOf(GetTableName) <> -1;
   end;
 end;
@@ -765,14 +600,10 @@ begin
   Result := fFDTable;
 end;
 
-type TFDTableAccess = class(TFDTable);
-
 function TBoldFireDACTable.ParamByName(const Value: string): IBoldParameter;
-var
-  lFDParam: TFireDacParam;
 begin
-  lFDParam := TFDTableAccess(FDTable).Params.ParamByName(Value);
-  Result := TBoldFireDACParameter.Create(lFDParam, Self);
+  // Required by base class but never called for IBoldTable
+  Result := nil;
 end;
 
 function TBoldFireDACTable.GetTableName: string;
@@ -799,13 +630,22 @@ var
   lIndexTempList: Integer;
   lGuard: IBoldGuard;
   i: integer;
+  CatalogName: string;
 begin
   lGuard := TBoldGuard.Create(lTempList);
   lTempList := TStringList.Create;
-  if ShowSystemTables then
-    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy, osSystem, osOther], [tkTable])
+
+  // For SQLite, don't pass database filename as catalog - it causes invalid SQL
+  // like "FROM bolddemo.db.sqlite_master" instead of "FROM sqlite_master"
+  if SameText(FDConnection.Params.DriverID, 'SQLite') then
+    CatalogName := ''
   else
-    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy], [tkTable]);
+    CatalogName := FDConnection.Params.Database;
+
+  if ShowSystemTables then
+    FDConnection.GetTableNames(CatalogName,'','',lTempList, [osMy, osSystem, osOther], [tkTable])
+  else
+    FDConnection.GetTableNames(CatalogName,'','',lTempList, [osMy], [tkTable]);
 
   // convert from fully qualified names in format: database.catalogue.table to just table name
   for i := 0 to lTempList.Count - 1 do
@@ -827,9 +667,39 @@ begin
   end;
 end;
 
+function TBoldFireDACConnection.TableExists(const TableName: String): Boolean;
+begin
+  // For Oracle, we need to check ALL_TABLES with OWNER filter because:
+  // 1. We might be connected as admin (SYSTEM) checking for tables in another schema
+  // 2. The default AllTableNames only shows current user's tables
+  if GetSQLDatabaseConfig.Engine = dbeOracle then
+  begin
+    var Query: IBoldQuery;
+    var SchemaOwner: string;
+    SchemaOwner := FDConnection.Params.UserName;
+    Query := GetQuery;
+    try
+      Query.AssignSQLText(
+        'SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = UPPER(''' + SchemaOwner + ''') AND TABLE_NAME = UPPER(''' + TableName + ''')');
+      Query.Open;
+      Result := not Query.Eof;
+      Query.Close;
+    finally
+      ReleaseQuery(Query);
+    end;
+  end
+  else
+    Result := inherited TableExists(TableName);
+end;
+
 procedure TBoldFireDACConnection.Commit;
 begin
   FDConnection.Commit;
+end;
+
+function TBoldFireDACConnection.GetImplementor: TObject;
+begin
+  result := FDConnection;
 end;
 
 function TBoldFireDACConnection.GetInTransaction: Boolean;
@@ -901,15 +771,17 @@ var
   vQuery: IBoldQuery;
   vDatabaseName: string;
 begin
-  vDatabaseName := LowerCase(FDConnection.Params.Database);
-  FDConnection.Params.Database := ''; // need to clear this to connect succesfully
+  vDatabaseName := FDConnection.Params.Database;
+  FDConnection.Connected := False;
+  FDConnection.Params.Database := ''; // need to clear this to connect successfully
   vQuery := GetQuery;
   try
     vQuery.SQLText := SQLDataBaseConfig.GetDatabaseExistsQuery(vDatabaseName);
     vQuery.Open;
-    result := vQuery.Fields[0].AsBoolean;
+    result := not vQuery.Eof;
   finally
     ReleaseQuery(vQuery);
+    FDConnection.Connected := False;
     FDConnection.Params.Database := vDatabaseName;
   end;
 end;
@@ -917,6 +789,8 @@ end;
 destructor TBoldFireDACConnection.Destroy;
 begin
   ReleaseCachedObjects;
+  if fOwnsConnection then
+    FreeAndNil(fFDConnection);
   inherited;
 end;
 
@@ -951,6 +825,18 @@ constructor TBoldFireDACConnection.Create(aFDConnection: TFDConnection; SQLDataB
 begin
   inherited Create(SQLDataBaseConfig);
   fFDConnection := aFDConnection;
+end;
+
+function TBoldFireDACConnection.CreateAnotherDatabaseConnection: IBoldDatabase;
+var
+  Connection: TFDConnection;
+  NewDbConnection: TBoldFireDACConnection;
+begin
+  Connection := TFDConnection.Create(nil);
+  Connection.Assign(self.fFDConnection);
+  NewDbConnection := TBoldFireDACConnection.Create(Connection, SQLDatabaseConfig);
+  NewDbConnection.fOwnsConnection := True;
+  result := NewDbConnection;
 end;
 
 procedure TBoldFireDACConnection.BeginExecuteQuery;
@@ -994,60 +880,11 @@ end;
 
 function TBoldFireDACConnection.GetDatabaseError(const E: Exception;
   const sSQL: string): EBoldDatabaseError;
-const
-  SQLERRORCODE = 'SQL Error Code: ';
 var
-  iErrorCode: Integer;
-  sMsg: string;
-  iPos: Integer;
-  aErrorType: TBoldDatabaseErrorType;
-  sServer,
-  sDatabase,
-  sUsername: string;
-  bUseWindowsAuth: Boolean;
   vConnectionString: string;
-const
-  // Provider names copied here to avoid dependancy
-  cMSSQLProvider = 'SQL Server'; // TSQLServerFDProvider.GetProviderName
-  cPostgreSQLProvider = 'PostgreSQL'; // TPostgreSQLFDProvider.GetProviderName
-  cOracleSQLProvider = 'Oracle'; // TOracleFDProvider.GetProviderName
-  cInterBaseProvider = 'InterBase';
-  cMSSQLDeadLock = 1205;
 begin
-  sMsg := E.Message;
-  aErrorType := bdetError;
   vConnectionString := FDConnection.ConnectionString;
-  Result := InternalGetDatabaseError(aErrorType, E, vConnectionString, '', '', '', false);
-
-{
-  bUseWindowsAuth := Pos('Authentication=Windows', FDConnection.ConnectString) > 0;
-  if (E is EFDError) then
-  begin
-    if FDConnection.ProviderName = cMSSQLProvider then
-      case EFDError(E).ErrorCode of
-        -2147467259, 2, 233: aErrorType := bdetConnection; // only set bdetConnection for cases where retry might work.
-        208, 4145: aErrorType := bdetSQL;
-        4060: aErrorType := bdetLogin; // SQLServer Error: 4060, Cannot open database "SessionStateService" requested by the login. The login failed. [SQLSTATE 42000]
-        18456: aErrorType := bdetLogin; // SQLServer Error: 18456, Login failed for user 'domain\user'. [SQLSTATE 28000]
-        cMSSQLDeadLock: aErrorType := bdetDeadlock;
-        //Deadlock und weitere ErrorCodes?
-      end
-    else
-    if FDConnection.ProviderName = cInterBaseProvider then
-      case EFDError(E).ErrorCode of
-        -803: aErrorType := bdetUpdate; // attempt to store duplicate value (visible to active transactions) in FDque index
-      end
-    else
-    if FDConnection.ProviderName = cPostgreSQLProvider then
-      case EFDError(E).ErrorCode of
-        0: aErrorType := bdetLogin;
-      end
-    else
-      raise Exception.Create('Error codes not implemented for ' + FDConnection.ProviderName);
-  end;
-  Result := InternalGetDatabaseError(aErrorType, E, sSQL, sServer, sDatabase,
-      sUsername, bUseWindowsAuth);
-}
+  Result := InternalGetDatabaseError(bdetError, E, vConnectionString, '', '', '', false);
 end;
 
 function TBoldFireDACConnection.GetExecQuery: IBoldExecQuery;
@@ -1135,6 +972,8 @@ begin
   end;
 end;
 
+type TCollectionAccess = class(TCollection);
+
 procedure TBoldFireDACConnection.ReleaseQuery(var Query: IBoldQuery);
 var
   lBoldFireDACQuery: TBoldFireDACQuery;
@@ -1143,6 +982,10 @@ begin
   begin
     lBoldFireDACQuery := Query.Implementor as TBoldFireDACQuery;
     lBoldFireDACQuery.clear;
+    while lBoldFireDACQuery.SQLStrings.Updating do
+      lBoldFireDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldFireDACQuery.Params).UpdateCount > 0 do
+      lBoldFireDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedQuery1) then
       fCachedQuery1 := lBoldFireDACQuery
@@ -1157,36 +1000,26 @@ end;
 procedure TBoldFireDACConnection.ReleaseExecQuery(var Query: IBoldExecQuery);
 var
   lBoldFireDACQuery: TBoldFireDACQuery;
-  lBoldFireDACExecQuery: TBoldFireDACExecQuery;
+//  lBoldFireDACExecQuery: TBoldFireDACExecQuery;
 begin
   if (Query.Implementor is TBoldFireDACQuery) then
   begin
     lBoldFireDACQuery := Query.Implementor as TBoldFireDACQuery;
-    if lBoldFireDACQuery.GetSQLStrings.Count <> 0 then
+    if lBoldFireDACQuery.SQLStrings.Count <> 0 then
     begin
-      lBoldFireDACQuery.GetSQLStrings.BeginUpdate;
+      lBoldFireDACQuery.SQLStrings.BeginUpdate;
       lBoldFireDACQuery.clear;
     end;
-    while TStringsAccess(lBoldFireDACQuery.GetSQLStrings).UpdateCount > 0 do
-      lBoldFireDACQuery.GetSQLStrings.EndUpdate;
+    while lBoldFireDACQuery.SQLStrings.Updating do
+      lBoldFireDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldFireDACQuery.Params).UpdateCount > 0 do
+      lBoldFireDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedExecQuery1) then
       fCachedExecQuery1 := lBoldFireDACQuery
     else
       lBoldFireDACQuery.free;
-  end
-{  else
-  if (Query.Implementor is TBoldFireDACExecQuery) then
-  begin
-    lBoldFireDACExecQuery := Query.Implementor as TBoldFireDACExecQuery;
-    lBoldFireDACExecQuery.clear;
-    Query := nil;
-    if not Assigned(fCachedExecQuery1) then
-      fCachedExecQuery1 := lBoldFireDACExecQuery
-    else
-      lBoldFireDACExecQuery.free;
-  end
-}
+  end;
 end;
 
 procedure TBoldFireDACConnection.ReleaseTable(var Table: IBoldTable);
@@ -1269,7 +1102,7 @@ end;
 
 function TBoldFireDACParameter.GetAsMemo: string;
 begin
-  Result := FDParam.AsMemo;
+  Result := String(FDParam.AsMemo);
 end;
 
 function TBoldFireDACParameter.GetAsString: string;
@@ -1378,7 +1211,7 @@ end;
 
 procedure TBoldFireDACParameter.SetAsMemo(const Value: string);
 begin
-  FDParam.AsMemo := Value;
+  FDParam.AsMemo := AnsiString(Value);
 end;
 
 procedure TBoldFireDACParameter.SetAsSmallInt(Value: Integer);
@@ -1510,7 +1343,7 @@ begin
   fUseReadTransactions := true;
 end;
 
-function TBoldFireDACExecQuery.Createparam(FldType: TFieldType;
+function TBoldFireDACExecQuery.CreateParam(FldType: TFieldType;
   const ParamName: string): IBoldParameter;
 begin
   result := CreateParam(FldType, ParamName, ptUnknown, 0);
@@ -1549,64 +1382,36 @@ begin
 end;
 
 procedure TBoldFireDACExecQuery.ExecSQL;
-var
-  Retries: Integer;
-  Done: Boolean;
 begin
   BeginExecuteQuery;
   try
-  BoldLogSQLWithParams(ExecQuery.SQL, self);
-  Retries := 0;
-  Done := false;
-  while not Done do
-  begin
+    BoldLogSQLWithParams(ExecQuery.SQL, self);
     try
       if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
         fReadTransactionStarted := false
       else
       begin
         if fUseReadTransactions then
-        (DatabaseWrapper as TBoldFireDACConnection).StartReadTransaction;
+          (DatabaseWrapper as TBoldFireDACConnection).StartReadTransaction;
         fReadTransactionStarted := fUseReadTransactions;
       end;
       ExecQuery.Execute;
-      if fReadTransactionStarted and  (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+      if fReadTransactionStarted and (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
       begin
-       (DatabaseWrapper as TBoldFireDACConnection).Commit;
-       fReadTransactionStarted := false;
+        (DatabaseWrapper as TBoldFireDACConnection).Commit;
+        fReadTransactionStarted := false;
       end;
-      Done := true;
     except
-      on e: Exception do
+      on E: Exception do
       begin
-        if (not fReadTransactionStarted) or (Retries > 4) then
-          raise TBoldFireDACConnection(DatabaseWrapper).GetDatabaseError(E, ExecQuery.SQL.Text);
         if (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
           (DatabaseWrapper as TBoldFireDACConnection).Rollback;
-        fReadTransactionStarted := false;
-        INC(Retries);
-        sleep(Retries*200);
+        raise TBoldFireDACConnection(DatabaseWrapper).GetDatabaseError(E, ExecQuery.SQL.Text);
       end;
     end;
-  end;
   finally
     EndExecuteQuery;
   end;
-end;
-
-procedure TBoldFireDACExecQuery.StartSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'StartSQLBatch']); // do not localize
-end;
-
-procedure TBoldFireDACExecQuery.EndSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'EndSQLBatch']); // do not localize
-end;
-
-procedure TBoldFireDACExecQuery.FailSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'FailSQLBatch']); // do not localize
 end;
 
 function TBoldFireDACExecQuery.FindParam(const Value: string): IBoldParameter;
@@ -1633,9 +1438,14 @@ begin
   Result := fExecQuery;
 end;
 
+function TBoldFireDACExecQuery.GetDataSet: TDataSet;
+begin
+  Result := ExecQuery;
+end;
+
 function TBoldFireDACExecQuery.GetParamCheck: Boolean;
 begin
-  result := true;
+  result := ExecQuery.ResourceOptions.ParamCreate;
 end;
 
 function TBoldFireDACExecQuery.GetParamCount: Integer;
@@ -1663,7 +1473,7 @@ begin
   result := ExecQuery.SQL;
 end;
 
-function TBoldFireDACExecQuery.GetSQLText: string;
+function TBoldFireDACExecQuery.GetSqlText: string;
 begin
   Result := ExecQuery.SQL.Text;
 end;
@@ -1687,14 +1497,14 @@ begin
   end;
 end;
 
-{procedure TBoldFireDACExecQuery.Prepare;
+procedure TBoldFireDACExecQuery.Prepare;
 begin
   ExecQuery.Prepare;
-end;}
+end;
 
 procedure TBoldFireDACExecQuery.SetParamCheck(value: Boolean);
 begin
-//  ExecQuery.ParamCheck := Value;
+  ExecQuery.ResourceOptions.ParamCreate := Value;
 end;
 
 procedure TBoldFireDACExecQuery.SetUseReadTransactions(value: boolean);

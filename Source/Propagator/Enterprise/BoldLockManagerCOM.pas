@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockManagerCOM;
@@ -122,7 +122,5 @@ constructor TBoldLockManagerCOMFactory.Create(ComServer: TComServerObject;
 begin
   inherited Create(ComServer, TBoldLockManagerCOM, ClassID, ClassName, Description, ciMultiInstance, batSTA);
 end;
-
-initialization
 
 end.

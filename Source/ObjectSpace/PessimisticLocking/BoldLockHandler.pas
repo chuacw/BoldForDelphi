@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockHandler;
@@ -62,7 +62,7 @@ type
     function EnsureLocks: Boolean; override;
     procedure GetPropagationEvents(EventList: TStringList); override;
   end;
- {$IFNDEF BOLD_NO_QUERIES}
+
   TBoldPessimisticLockHandler = class(TBoldAbstractPessimisticLockHandler)
   private
     fRequiredShared: TBoldRegionList;
@@ -105,7 +105,7 @@ type
     destructor Destroy; override;
     function LockElement(Element: TBoldDomainElement): Boolean; override;
     function EnsureLocks: Boolean; override;
-    procedure ReleaseUnNeededRegions; override;
+    procedure ReleaseUnneededRegions; override;
     property RequiredShared: TBoldRegionList read GetRequiredShared;
     property RequiredExclusive: TBoldRegionList read GetRequiredExclusive;
     property OnActivityStart: TNotifyEvent read fOnActivityStart write fOnActivityStart;
@@ -113,7 +113,6 @@ type
     property OnProgress: TBoldLockManagerProgressEvent read fOnActivityPropgress write fOnActivityPropgress;
   end;
 
- {$ENDIF}
 implementation
 
 uses
@@ -145,7 +144,6 @@ end;
 
 { TBoldPessimisticLockHandler }
 
-{$IFNDEF BOLD_NO_QUERIES}
 constructor TBoldPessimisticLockHandler.CreateWithLockHolder(System: TBoldSystem; LockHolder: TBoldAbstractLockHolder);
 begin
   inherited Create(System);
@@ -423,7 +421,7 @@ begin
   end;
 end;
 
-procedure TBoldPessimisticLockHandler.ReleaseUnNeededRegions;
+procedure TBoldPessimisticLockHandler.ReleaseUnneededRegions;
 var
   CurrentRegion: TBoldRegion;
   Elements: TList;
@@ -597,7 +595,6 @@ begin
   if AddSharedRegions then
     Add(fLockHolder.HeldShared);
 end;
-  {$ENDIF}
 
 { TBoldFailureGetLocksFailed }
 

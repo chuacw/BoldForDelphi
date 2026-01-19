@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemHandleCom;
@@ -35,8 +35,7 @@ uses
   SysUtils,
   BoldComObjectSpace_TLB,
   BoldComUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 {-- TBoldSystemHandleCom ------------------------------------------------------}
 
@@ -107,7 +106,5 @@ function TBoldSystemHandleCom.ServerHandleClassName: string;
 begin
   result := 'TBoldServerHandle';
 end;
-
-initialization
 
 end.

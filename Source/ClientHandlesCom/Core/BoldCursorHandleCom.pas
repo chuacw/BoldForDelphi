@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCursorHandleCom;
@@ -177,7 +177,5 @@ begin
   else if fCurrentIndex >= fList.Count then
     fCurrentIndex := fList.Count-1;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldControlPackCom;
@@ -291,7 +291,7 @@ type
   { TBoldSingleRendererCom }
   TBoldSingleRendererCom = class(TBoldRendererCom)
   public
-    procedure MakeUptodateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); virtual; abstract;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); virtual; abstract;
   end;
 
   { TBoldSingleFollowerControllerCom }

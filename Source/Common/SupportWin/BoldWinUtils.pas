@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldWinUtils;
@@ -26,7 +26,5 @@ begin
   GetWindowRect(Child, ChildRect);
   Result := ParentRect.Bottom - ChildRect.Bottom;
 end;
-
-initialization
 
 end.

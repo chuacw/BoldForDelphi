@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldControllerListControlPackCom;
@@ -52,8 +52,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 var
   DefaultDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRendererCom;

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGuiResourceStringsCom;
@@ -32,8 +32,5 @@ resourcestring
   SNavHintMoveDown = 'Move down';
 
 implementation
-
-
-initialization
 
 end.

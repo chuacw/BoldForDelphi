@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldIDESupport;
@@ -32,7 +32,5 @@ begin
     Values.Free;
   end;
 end;
-
-initialization
 
 end.

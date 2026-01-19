@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDBISAMInterfaces;
@@ -112,8 +112,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 { TBoldDBISAMQuery }
 

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLNameTrimmer;
@@ -35,8 +35,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 var
   _UMLNameFixer: TUMLNameFixer = nil;
@@ -94,7 +93,6 @@ begin
 end;
 
 initialization
-
   _UMLNameFixer := TUMLNameFixer.Create(true);
 
 finalization

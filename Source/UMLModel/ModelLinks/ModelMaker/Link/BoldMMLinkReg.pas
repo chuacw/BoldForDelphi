@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMMLinkreg;
@@ -23,6 +23,8 @@ uses
   BoldPropertyEditors,
   BoldAbstractModel,
   BoldUMLMMLink;
+
+{$R *.res}
 
 type
   { forward declarations }
@@ -69,8 +71,8 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
-  RegisterEditors;
+    RegisterComponentsOnPalette;
+    RegisterEditors;
 end;
 
 end.

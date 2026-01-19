@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListListControlPackCom;
@@ -77,12 +77,11 @@ type
 implementation
 
 uses
-  SysUtils,
+  SysUtils
   {$IFNDEF BOLDCOMCLIENT}
-  BoldComObjectSpace_TLB,
-  BoldGUI,
-  {$ENDIF}
-  BoldRev;
+  ,BoldComObjectSpace_TLB,
+  BoldGUI
+  {$ENDIF};
 
 var
   DefaultListAsFollowerListRenderer: TBoldListAsFollowerListRendererCom;

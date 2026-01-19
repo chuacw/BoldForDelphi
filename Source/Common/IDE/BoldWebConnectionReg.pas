@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldWebConnectionReg;
@@ -23,7 +23,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
+    RegisterComponentsOnPalette;
 end;
 
 end.

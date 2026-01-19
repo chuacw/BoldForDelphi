@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldImageBitmapCom;
@@ -56,8 +56,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 {-- TBoldViewBitmapAdapterCom --}
 

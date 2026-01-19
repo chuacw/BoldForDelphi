@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExpressionHandleCom;
@@ -46,8 +46,7 @@ uses
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
   BoldComUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 {-- TBoldExpressionHandleCom --------------------------------------------------}
 

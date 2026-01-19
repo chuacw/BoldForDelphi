@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -429,9 +436,7 @@ type
     property Color;
     property Constraints;
     property Columns;
-    {$IFNDEF BCB}
     property Ctl3d;
-    {$ENDIF}
     property DefaultColWidth;
     property DefaultRowHeight;
     property DragCursor;
@@ -542,7 +547,7 @@ uses
   BoldDefs,
   BoldEnvironment,
   BoldListControlPackCom,
-  BoldMath,
+  System.Math,
   TypInfo;
 
 const
@@ -620,7 +625,7 @@ var
 begin
   Assert(Assigned(Grid));
   R := Rect(2, 2, TBoldCustomGridCom(Grid).Columns[TBoldCustomGridCom(Grid).Col].Width - 2, Height);
-  SendMessage(Handle, EM_SETRECTNP, 0, LongInt(@R));
+  SendMessage(Handle, EM_SETRECTNP, 0, LPARAM(@R));
   SendMessage(Handle, EM_SCROLLCARET, 0, 0);
 end;
 
@@ -1918,7 +1923,7 @@ end;
 function TBoldCustomGridCom.CanEditAcceptKey(KEY: Char): Boolean;
 begin
   Result := Assigned(CurrentCellFollower) and
-            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(AnsiChar(Key), CurrentCellFollower);
+            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(AnsiChar(KEY), CurrentCellFollower);
 end;
 
 function TBoldCustomGridCom.CanEditModify: Boolean;
@@ -2727,7 +2732,7 @@ begin
       SetIndex(1);
       BoldProperties.Expression := 'constraints->exists(c|not c)';
       Width := bmpBoldGridSelected.Width + 3;
-      Title.Caption := '�';
+      Title.Caption := '§';
       BoldProperties.Renderer := TBoldConstraintRendererCom.Create(Self);
       ColReadOnly := True;
     end;
@@ -3065,8 +3070,5 @@ begin
           CellFollowers[i, TopRow].EnsureMulti;
   end;
 end;
-
-
-initialization
 
 end.

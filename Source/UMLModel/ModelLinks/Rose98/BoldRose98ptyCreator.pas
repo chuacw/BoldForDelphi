@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRose98ptyCreator;
@@ -411,7 +411,5 @@ procedure TBoldRose98ptyCreator.PutLine;
 begin
   PutLine('');
 end;
-
-initialization
 
 end.

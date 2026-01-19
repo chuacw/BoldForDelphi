@@ -1,4 +1,4 @@
-unit BoldToCxGridConverterUnit;
+﻿unit BoldToCxGridConverterUnit;
 
 interface
 
@@ -10,6 +10,7 @@ uses
   SysUtils;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldToCxGridConverter = class(TComponent)
   private
     procedure ConvertGrid(aBoldGrid : TBoldGrid);

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDatabaseAdapterDBISAM;
@@ -81,7 +81,5 @@ procedure TBoldDatabaseAdapterDBISAM.SetDataBase(const Value: TDBISAMDataBase);
 begin
   InternalDatabase := value;
 end;
-
-initialization
 
 end.

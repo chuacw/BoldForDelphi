@@ -1,21 +1,188 @@
 # BoldForDelphi
-This is develop branch.
 
-Purpose of this is either to direct commit changes here.
-For more complicated changes it is an advantage to make a separate feature branch that is later merged here.
-External developers should fork repository and pull request changes to this branch.
+Bold is a Model Driven Architecture (MDA) framework and Object-Relational Mapping (ORM) tool for Delphi. It allows you to start with a UML model of your application and execute it with a sophisticated object-relational mapping layer, OCL query language, change synchronization, and IDE-integrated tools.
 
-The original source code of the Bold library for Delphi
-Version 4.0.1.0 Bold for Delphi, Release 4.0 - 2004-04-23
+## Use Cases
 
-Bold is a tool in the MDA (Model Driven Architecture) space, which allows you to start with an UML model of your application and a set of business rules written in a high level language and “execute” the model after creating a graphical user interface for it.
-Bold includes a sophisticated object-relational mapping layer, ability to map data to multiple formats, changes synchronization, and much more. It includes a large amount of IDE integrated tools and options to work with external UML modeling software.
+Bold for Delphi is best suited for:
 
-For more information see:
-- https://delphi.fandom.com/wiki/Bold_for_Delphi
-- http://boldfordelphi.blogspot.com/
+- **Complex Domain Models** - Applications with many interrelated business entities, inheritance hierarchies, and associations
+- **Data-Intensive Business Applications** - ERP, logistics, CRM, inventory management, financial software
+- **Rich Query Requirements** - OCL enables expressive queries like `orders->select(status = 'Pending' and total > 1000)`
+- **Long-Lived Desktop Applications** - Automatic UI updates when data changes via the subscription system
+- **Rapid Prototyping** - Define your model in UML, generate code, and have a working database-backed application quickly
 
-There is a new Slackspace dedicated only for this project.
-If you are interested to join the chat about the repository login to Discord here https://discord.gg/C6frzsn
-  
-The project source code has been made available by https://www.embarcadero.com/ and published under an MIT license.
+## Getting Started
+
+- **[Documentation](https://bero.github.io/BoldForDelphi/)** - Full documentation including concepts, class reference, and FAQ.
+- **[Quick Start Guide](Doc/quickstart.md)** - Step-by-step instructions to install Bold, build your first model, and run the MasterDetail example application.
+- **[Roadmap](ROADMAP.md)** - Development plans, supported features, and future directions for Bold for Delphi.
+- **[Changelog](CHANGELOG.md)** - Version history and release notes.
+
+## Supported Delphi Versions
+
+- Delphi 13.0 Athens (packages/Delphi30/)
+- Delphi 12.3 Athens (packages/Delphi29.3/)
+- Delphi 12.1 Athens (packages/Delphi29.1/)
+- Delphi 11.x Alexandria (packages/Delphi28/)
+
+## Dependencies
+
+### Platform
+
+Bold for Delphi is **Windows only** (Win32/Win64). It is not compatible with cross-platform targets (Linux, macOS, iOS, Android).
+
+### Runtime Dependencies
+
+Bold for Delphi has **no external runtime dependencies**. All required functionality is included in the source.
+
+### Database Adapters
+
+| Adapter | Package | Notes |
+|---------|---------|-------|
+| FireDAC | Built-in | Recommended. Included with Delphi |
+| UniDAC | Optional | Requires [UniDAC](https://www.devart.com/unidac/) license. Set `UniDAC` environment variable |
+
+### GUI Component Integrations
+
+| Integration | Package | Notes |
+|-------------|---------|-------|
+| DevExpress | dclBoldDevEx.dpk | Bold-aware DevExpress components. Requires [DevExpress VCL](https://www.devexpress.com/products/vcl/) license with full source code |
+
+### Unit Test Dependencies
+
+The unit test project requires these external frameworks (not needed for production use):
+
+| Dependency | Path | Purpose |
+|------------|------|---------|
+| [DUnitX](https://github.com/VSoftTechnologies/DUnitX) | `C:\Attracs\DUnitX\Source` | Unit testing framework |
+| [Delphi-Mocks](https://github.com/VSoftTechnologies/Delphi-Mocks) | `C:\Attracs\Delphi-Mocks\Source` | Mocking framework for interface testing |
+| [DelphiCodeCoverage](https://github.com/DelphiCodeCoverage/DelphiCodeCoverage) | `C:\Attracs\DelphiCodeCoverage\` | Code coverage reporting |
+
+Environment variables `DUnitX` and `DelphiMocks` are set automatically by `run_coverage.ps1`.
+
+## Building
+
+### Prerequisites
+- Delphi 13.0, 12.3, 12.1 CE or 11.3 installed
+
+### Build the Package
+
+Or manually from PowerShell:
+by using https://github.com/omonien/DelphiStandards/blob/master/DelphiBuildDPROJ.ps1
+
+Adjust -DelphiVersion from what you use.
+
+```powershell
+`DelphiBuildDPROJ.ps1 -Projectfile "C:\BoldForDelphi\packages\Delphi30\dclBold30.dproj" -DelphiVersion "37.0" -VerboseOutPut`
+```
+
+## Unit Tests and Code Coverage
+
+[![codecov](https://codecov.io/gh/bero/BoldForDelphi/branch/develop/graph/badge.svg)](https://codecov.io/gh/bero/BoldForDelphi)
+
+Unit tests are located in `UnitTest/` and use the DUnitX framework. Code coverage is tracked on [Codecov.io](https://codecov.io/gh/bero/BoldForDelphi).
+
+### Running Tests with Code Coverage
+
+```powershell
+cd UnitTest
+.\run_coverage.ps1
+```
+
+This builds the test project, runs all tests, generates a coverage report, and opens it in your browser.
+
+**Options:**
+- `-SkipBuild` - Skip compilation, run coverage on existing executable
+- `-OpenReport:$false` - Don't open the report automatically
+- `-Upload` - Upload results to Codecov.io (requires `CODECOV_TOKEN` environment variable)
+
+**Prerequisites:**
+- [DelphiCodeCoverage](https://github.com/DelphiCodeCoverage/DelphiCodeCoverage) installed at `C:\Attracs\DelphiCodeCoverage\`
+
+Results are generated in `UnitTest/coverage_report/`. Open `CodeCoverage_summary.html` to view the local report.
+
+## Source Organization
+
+```
+Source/
+├── BoldAwareGUI/          # GUI components and control packs
+│   ├── BoldControls/      # Visual controls (Grid, Edit, ComboBox, etc.)
+│   ├── BoldDevex/         # DevExpress integration (requires DevExpress license)
+│   ├── ControlPacks/      # Renderer/follower pattern for UI binding
+│   ├── Core/              # GUI base functionality
+├── Common/                # Shared infrastructure
+│   ├── Core/              # Base classes (BoldBase, BoldContainers, BoldDefs)
+│   ├── Subscription/      # Observer pattern (BoldSubscription, BoldDeriver)
+│   ├── Support/           # Utilities (BoldUtils, BoldGuard, BoldIndex)
+│   ├── COM/               # COM infrastructure
+│   ├── Logging/           # Log handling
+│   └── IDE/               # Common IDE support
+├── ObjectSpace/           # Object model runtime
+│   ├── BORepresentation/  # Business object representation
+│   ├── Core/              # BoldElements, BoldSystem
+│   ├── Ocl/               # OCL parser and evaluator
+│   ├── RTModel/           # Runtime type information
+│   └── Undo/              # Undo/redo mechanism
+├── Persistence/           # Database persistence
+│   ├── Core/              # Persistence controllers and handles
+│   ├── DB/                # Database persistence base
+│   ├── FireDAC/           # FireDAC adapter (recommended)
+│   ├── SOAP/              # SOAP persistence
+│   └── Propagation/       # Change propagation
+├── PMapper/               # Object-relational mapping
+│   ├── SQL/               # SQL generation
+│   ├── Default/           # Default mappers
+│   └── DBEvolutor/        # Database schema evolution
+├── Handles/               # Handle system for UI binding
+├── MoldModel/             # Model representation and code generation
+├── UMLModel/              # UML metamodel and editor
+└── ValueSpace/            # Value interfaces and streaming
+```
+
+## Key Packages
+
+| Package | Type | Description |
+|---------|------|-------------|
+| dclBold.dpk | Design-time | Main Bold components package |
+
+## Contributing
+
+1. **Report issues** - Use GitHub Issues for bugs and feature requests
+2. **Submit PRs** - Fork the repo and submit pull requests
+3. **Documentation** - Help improve docs and examples
+4. **Testing** - Report compatibility issues with different databases/Delphi versions
+5. **Spread the word** - Blog posts, conference talks, social media
+
+Have suggestions for the roadmap? Open an issue on GitHub or discuss on Discord.
+
+## Versioning
+
+Version format: `YY.MM.patch` (e.g., 25.12.0)
+
+| Source | Purpose |
+|--------|---------|
+| dproj | Current version (shown in About dialog) |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+| Git tags | Backup/release markers |
+
+**Release workflow:**
+1. Move `[Unreleased]` items in CHANGELOG.md to new version section
+2. Update version in dproj (Project > Options > Version Info)
+3. Create git tag: `git tag v25.12.1`
+
+## Resources
+
+- **Documentation**: https://bero.github.io/BoldForDelphi/
+- **GitHub**: https://github.com/bero/BoldForDelphi
+- **Issues**: https://github.com/bero/BoldForDelphi/issues
+- **Discord**: https://discord.gg/C6frzsn
+- **Wiki**: https://delphi.fandom.com/wiki/Bold_for_Delphi
+- **GitHub Wiki**: https://github.com/bero/BoldForDelphi/wiki
+- **Blog**: http://boldfordelphi.blogspot.com/
+
+## License
+
+MIT License - Source code made available by Embarcadero.
+
+Original Version: 4.0.1.0 Bold for Delphi, Release 4.0 (2004-04-23)
